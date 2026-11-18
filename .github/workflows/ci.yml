@@ -1,0 +1,104 @@
+name: SafeHer CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  backend-checks:
+    name: Backend Lint, Typecheck & Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: safeher_user
+          POSTGRES_PASSWORD: safeher_password
+          POSTGRES_DB: safeher_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pytest pytest-asyncio httpx
+          pip install -r backend/requirements.txt
+
+      - name: Run Ruff (Linter & Formatter Check)
+        run: |
+          ruff check backend/
+          ruff format --check backend/
+
+      - name: Run Backend Tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://safeher_user:safeher_password@localhost:5432/safeher_db
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: test-ci-secret-key-that-is-at-least-32-characters-long
+          APP_ENV: testing
+        run: |
+          cd backend
+          pytest -v
+
+  frontend-checks:
+    name: Frontend Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run Type Check & Build
+        run: |
+          cd frontend
+          npm run build
+
+  security-audit:
+    name: Security & Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check for Leaked Secrets
+        uses: gitleaks/gitleaks-action@v2
+        continue-on-error: true

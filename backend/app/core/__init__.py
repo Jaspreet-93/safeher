@@ -1,0 +1,1 @@
+"""SafeHer Core Architecture Package."""
