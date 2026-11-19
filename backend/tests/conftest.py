@@ -4,6 +4,7 @@ from collections.abc import AsyncGenerator
 import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import StaticPool
 
 # Set testing environment before app initialization
 os.environ["APP_ENV"] = "testing"
@@ -13,10 +14,11 @@ os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 from app.core.database import Base, get_db
 from app.main import app
 
-# Create in-memory test engine
+# Create in-memory test engine with StaticPool so all sessions share the same memory DB
 test_engine = create_async_engine(
     "sqlite+aiosqlite:///:memory:",
     connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
     future=True,
 )
 
@@ -45,9 +47,10 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @pytest.fixture
-async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
+async def client() -> AsyncGenerator[AsyncClient, None]:
     async def override_get_db() -> AsyncGenerator[AsyncSession, None]:
-        yield db_session
+        async with TestingSessionLocal() as session:
+            yield session
 
     app.dependency_overrides[get_db] = override_get_db
     transport = ASGITransport(app=app)

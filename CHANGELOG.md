@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Backend (Contacts, Smart SOS Core, Outbox & Chaos Verification)
+- Emergency Contacts engine (`emergency_contacts`) with priority ordering, verification tokens, and scoped location permissions.
+- Public Contact Verification endpoint (`/contacts/verify/{token}`) allowing contacts to accept or decline being an emergency responder.
+- Smart SOS incident state machine: `created → active → (cancelled | resolved | escalated)` with 5-second grace window cancellation.
+- Strict client-driven idempotency (`X-Idempotency-Key`): prevents duplicate incidents and SMS floods during panic multi-taps.
+- Transactional Outbox pattern: atomic database persistence of incidents and outbox notification items (`emergency_notifications`).
+- `MockSmsProvider` with honest `[MOCK]` logging (Rule 5 compliance) and controllable fault-injection levers for chaos resilience tests.
+- Contact emergency acknowledgement endpoint (`/incidents/ack/{token}`) with 112 emergency fallback and location links.
+- Comprehensive automated test suite: 17/17 tests passing including unit and chaos/reliability tests.
+
 ### Added - Phase 1 (Auth, Consent Records & RBAC)
 - Argon2id password hashing implementation (`argon2-cffi`) with `t=3, m=65536, p=4`.
 - Short-lived JWT access tokens and opaque rotating refresh tokens with SHA-256 hash persistence.
