@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 3 (Real Notification Providers, Multi-Tier Failover & Carrier DLR Webhooks)
+- Indian DLT-compliant SMS adapter (`DLTSmsProvider`) adhering to TRAI regulations with mandatory Sender ID (`SAFEHR`) and pre-registered template validation (`SOS_ALERT`, `CONTACT_VERIFY`).
+- Robust Indian mobile number sanitizer and validator accepting `+91`, `91`, and standard 10-digit formats with prefix sanity checking.
+- Multi-tier emergency failover engine (`NotificationRouter`):
+  - **Tier 1:** Primary SMS Gateway (Fast2SMS / Telecom DLT).
+  - **Tier 2:** Secondary SMS Gateway (Twilio / Alternate Route) with automatic trigger upon Tier 1 failure.
+  - **Tier 3:** High-priority Email & Push fallback if carrier gateways fail.
+- Delivery Receipt (DLR) Webhook (`POST /api/v1/webhooks/sms/dlr`) secured with HMAC-SHA256 signature verification (`X-Webhook-Signature`) to prevent message status forgery or spoofing.
+- Transactional Outbox integration: `OutboxService` automatically routes notifications through `NotificationRouter` and persists carrier message identifiers.
+- Frontend Carrier Delivery Audit Trail Modal (`DeliveryReceiptsModal`) allowing users and responders to inspect carrier transaction IDs, DLR timestamps, and failover diagnostics.
+- Rule 5 adherence: All mock providers and dev UI components are prominently tagged `[MOCK]` to never mislead users.
+- Automated test suites: `test_notification_providers.py` and `test_failover_engine.py` verifying phone validation, failover ladders, and HMAC webhook security (24/24 tests passing).
+
 ### Added - Phase 2 Frontend (UI, Offline Outbox & Contact Ack Viewer)
 - `useGeolocation` hook for high-accuracy GPS coordinates, horizontal accuracy, and fresh location timestamps.
 - `useOfflineOutbox` hook detecting connectivity loss, queuing SOS incidents locally, displaying fail-loudly warnings ("NOT SENT — NO CONNECTION"), and launching native 112 dialer and pre-formatted emergency SMS.

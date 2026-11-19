@@ -95,6 +95,11 @@ class EmergencyNotification(Base):
     recipient_address: Mapped[str] = mapped_column(String(255), nullable=False)
     message_body: Mapped[str] = mapped_column(Text, nullable=False)
 
+    # Carrier / Gateway Message Identifier for DLR Webhook Matching
+    provider_message_id: Mapped[str | None] = mapped_column(
+        String(128), index=True, nullable=True
+    )
+
     # Opaque token for contact acknowledgement link (Hashed at rest)
     secure_ack_token: Mapped[str] = mapped_column(
         String(64), unique=True, index=True, nullable=False

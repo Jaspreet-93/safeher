@@ -14,6 +14,13 @@ os.environ["DATABASE_URL"] = "sqlite+aiosqlite:///:memory:"
 from app.core.database import Base, get_db
 from app.main import app
 
+# Import all models to ensure registered in Base.metadata
+from app.models.consent import ConsentRecord  # noqa: F401
+from app.models.contact import EmergencyContact  # noqa: F401
+from app.models.incident import EmergencyIncident, EmergencyNotification  # noqa: F401
+from app.models.session import AuthSession  # noqa: F401
+from app.models.user import User, UserProfile  # noqa: F401
+
 # Create in-memory test engine with StaticPool so all sessions share the same memory DB
 test_engine = create_async_engine(
     "sqlite+aiosqlite:///:memory:",

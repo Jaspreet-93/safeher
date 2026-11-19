@@ -333,6 +333,7 @@ class IncidentService:
                 recipient_address=n.recipient_address,
                 channel=n.channel,
                 status=n.status,
+                provider_message_id=n.provider_message_id,
                 sent_at=n.sent_at,
                 delivered_at=n.delivered_at,
                 acknowledged_at=n.acknowledged_at,

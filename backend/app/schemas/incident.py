@@ -32,6 +32,7 @@ class NotificationStatusResponse(BaseModel):
     recipient_address: str
     channel: str
     status: str  # queued, sent, delivered, failed, acknowledged
+    provider_message_id: str | None = None
     sent_at: datetime | None = None
     delivered_at: datetime | None = None
     acknowledged_at: datetime | None = None

@@ -14,6 +14,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useGeolocation } from '../../hooks/useGeolocation';
 import { useOfflineOutbox } from '../../hooks/useOfflineOutbox';
+import { DeliveryReceiptsModal, NotificationReceipt } from './DeliveryReceiptsModal';
 
 export const SOSControl: React.FC = () => {
   const { token, isAuthenticated } = useAuth();
@@ -26,6 +27,7 @@ export const SOSControl: React.FC = () => {
   const [incidentData, setIncidentData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [offlineNotice, setOfflineNotice] = useState(false);
+  const [selectedReceipt, setSelectedReceipt] = useState<NotificationReceipt | null>(null);
 
   // Countdown timer effect
   useEffect(() => {
@@ -341,7 +343,9 @@ export const SOSControl: React.FC = () => {
               incidentData?.notifications?.map((notif: any) => (
                 <div
                   key={notif.id}
-                  className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs"
+                  onClick={() => setSelectedReceipt(notif)}
+                  title="Click to view carrier delivery audit trail"
+                  className="p-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-between text-xs cursor-pointer transition-colors"
                 >
                   <div>
                     <span className="font-bold text-slate-900">{notif.contact_name}</span>
@@ -355,11 +359,15 @@ export const SOSControl: React.FC = () => {
                       </span>
                     ) : notif.status === 'delivered' ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-bold text-[10px]">
-                        <CheckCircle2 className="w-3 h-3" /> SMS Delivered
+                        <CheckCircle2 className="w-3 h-3" /> Carrier Delivered
                       </span>
                     ) : notif.status === 'sent' ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px]">
-                        <Clock className="w-3 h-3" /> SMS Sent
+                        <Clock className="w-3 h-3" /> Sent to Gateway
+                      </span>
+                    ) : notif.status === 'failed' ? (
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 font-bold text-[10px]">
+                        <XCircle className="w-3 h-3" /> Failed (View Log)
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold text-[10px]">
@@ -402,6 +410,13 @@ export const SOSControl: React.FC = () => {
           <p className="text-xs text-slate-500">Glad you are safe! Notifications updated.</p>
         </div>
       )}
+
+      {/* Delivery Receipts Modal for In-depth Audit Trail */}
+      <DeliveryReceiptsModal
+        isOpen={!!selectedReceipt}
+        onClose={() => setSelectedReceipt(null)}
+        notification={selectedReceipt}
+      />
     </section>
   );
 };

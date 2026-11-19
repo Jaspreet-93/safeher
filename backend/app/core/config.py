@@ -64,6 +64,27 @@ class Settings(BaseSettings):
     PAYMENTS_PROVIDER: str = "mock"
     LLM_PROVIDER: str = "mock"
 
+    # SMS & DLT Credentials (India)
+    SMS_DLT_SENDER_ID: str = "SAFEHR"
+    FAST2SMS_API_KEY: str | None = None
+    TWILIO_ACCOUNT_SID: str | None = None
+    TWILIO_AUTH_TOKEN: str | None = None
+    TWILIO_FROM_PHONE: str | None = None
+
+    # SMTP Email
+    SMTP_HOST: str | None = None
+    SMTP_PORT: int = 587
+    SMTP_USER: str | None = None
+    SMTP_PASSWORD: str | None = None
+    SMTP_FROM_EMAIL: str = "emergency@safeher.internal"
+
+    # Web Push (VAPID)
+    VAPID_PUBLIC_KEY: str | None = None
+    VAPID_PRIVATE_KEY: str | None = None
+
+    # Webhook Security
+    WEBHOOK_SECRET: str = "default-insecure-webhook-secret-change-in-prod"
+
     # Emergency Primary Contact
     EMERGENCY_NUMBER_PRIMARY: str = "112"
 
