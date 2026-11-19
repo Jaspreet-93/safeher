@@ -1,26 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { AppHeader } from './components/layout/AppHeader';
 import { EmergencyFooter } from './components/layout/EmergencyFooter';
 import { HomePage } from './pages/HomePage';
 import { AuthPage } from './pages/AuthPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { EmergencyAckPage } from './pages/EmergencyAckPage';
+import { ContactVerifyPage } from './pages/ContactVerifyPage';
 
 export const MainContent: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'auth' | 'profile'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'auth' | 'profile' | 'ack' | 'verify'>('home');
+  const [routeToken, setRouteToken] = useState<string>('');
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path.startsWith('/emergency/ack/')) {
+      const token = path.replace('/emergency/ack/', '');
+      if (token) {
+        setRouteToken(token);
+        setCurrentView('ack');
+      }
+    } else if (path.startsWith('/contact/verify/')) {
+      const token = path.replace('/contact/verify/', '');
+      if (token) {
+        setRouteToken(token);
+        setCurrentView('verify');
+      }
+    }
+  }, []);
+
+  const handleNavigateHome = () => {
+    window.history.pushState({}, '', '/');
+    setCurrentView('home');
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans">
       <AppHeader
         environment="development"
         isMock={true}
-        currentView={currentView}
-        onNavigate={setCurrentView}
+        currentView={currentView === 'ack' || currentView === 'verify' ? 'home' : currentView}
+        onNavigate={(view) => {
+          window.history.pushState({}, '', '/');
+          setCurrentView(view);
+        }}
       />
       <div className="flex-1 flex flex-col">
         {currentView === 'home' && <HomePage />}
         {currentView === 'auth' && <AuthPage onSuccess={() => setCurrentView('home')} />}
         {currentView === 'profile' && <ProfilePage />}
+        {currentView === 'ack' && (
+          <EmergencyAckPage token={routeToken} onBack={handleNavigateHome} />
+        )}
+        {currentView === 'verify' && (
+          <ContactVerifyPage token={routeToken} onBack={handleNavigateHome} />
+        )}
       </div>
       <EmergencyFooter />
     </div>

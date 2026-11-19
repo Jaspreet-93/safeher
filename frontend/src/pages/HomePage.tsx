@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  AlertOctagon,
   Navigation,
   Users,
   Building2,
@@ -9,9 +8,11 @@ import {
   Server,
   Database,
   Radio,
-  Lock,
+  AlertOctagon,
 } from 'lucide-react';
 import { HealthStatus } from '../types';
+import { SOSControl } from '../features/emergency/SOSControl';
+import { ContactManager } from '../features/contacts/ContactManager';
 
 export const HomePage: React.FC = () => {
   const [health, setHealth] = useState<HealthStatus | null>(null);
@@ -25,7 +26,6 @@ export const HomePage: React.FC = () => {
         setLoading(false);
       })
       .catch(() => {
-        // Fallback representation when backend is running separately or offline
         setHealth({
           status: 'online',
           app_name: 'SafeHer',
@@ -48,39 +48,11 @@ export const HomePage: React.FC = () => {
 
   return (
     <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Hero & Emergency Activation Preview */}
-      <section className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200 text-center relative overflow-hidden">
-        <div className="max-w-2xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 text-brand-700 text-xs font-semibold">
-            <Lock className="w-3.5 h-3.5" />
-            <span>End-to-End Privacy-First Architecture</span>
-          </div>
+      {/* Smart SOS Core Section */}
+      <SOSControl />
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Safety that empowers individuals, connects communities & protects organizations.
-          </h1>
-
-          <p className="text-slate-600 text-base">
-            SafeHer provides high-reliability emergency assistance, consent-based journey tracking, civic safety intelligence, and institutional coordination.
-          </p>
-
-          {/* Interactive SOS Trigger Button (Accessible, large, 1-thumb touch target) */}
-          <div className="pt-4 flex flex-col items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => alert("SOS Trigger Simulation: In Phase 2, this initiates incident creation, location capture, offline outbox queuing, and SMS dispatch.")}
-              className="w-48 h-48 rounded-full bg-emergency-red hover:bg-emergency-red-dark text-white font-black text-2xl tracking-wider shadow-2xl flex flex-col items-center justify-center gap-2 transform active:scale-95 transition-all animate-emergency-ring focus:outline-none focus:ring-8 focus:ring-emergency-red/30 cursor-pointer"
-              aria-label="Activate Emergency SOS"
-            >
-              <AlertOctagon className="w-16 h-16 stroke-[2.5]" />
-              <span>HOLD SOS</span>
-            </button>
-            <span className="text-xs text-slate-500 font-medium">
-              Press and hold for 3 seconds or tap to trigger grace countdown
-            </span>
-          </div>
-        </div>
-      </section>
+      {/* Trusted Contacts Management Section */}
+      <ContactManager />
 
       {/* Product Pillars Grid */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -91,11 +63,11 @@ export const HomePage: React.FC = () => {
           </div>
           <h2 className="text-lg font-bold text-slate-900">SafeHer Personal</h2>
           <p className="text-sm text-slate-600">
-            Smart SOS with client-side offline outbox, Journey Guardian with deviation detection, server-side safety timers, and ephemeral live location sharing.
+            Smart SOS with client-side offline outbox, trusted contacts escalation, and grace countdown cancellation.
           </p>
           <div className="pt-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Phase 0 Foundation Ready
+              <CheckCircle2 className="w-3.5 h-3.5" /> Phase 2 Core Active
             </span>
           </div>
         </div>
@@ -107,7 +79,7 @@ export const HomePage: React.FC = () => {
           </div>
           <h2 className="text-lg font-bold text-slate-900">SafeHer Community</h2>
           <p className="text-sm text-slate-600">
-            Crowdsourced safety reporting (broken streetlights, isolated spots) with automatic spatial fuzzing (100–300m) and complete reporter pseudonymization.
+            Crowdsourced safety reporting with automatic spatial fuzzing (100–300m) and complete reporter pseudonymization.
           </p>
           <div className="pt-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full">
@@ -123,7 +95,7 @@ export const HomePage: React.FC = () => {
           </div>
           <h2 className="text-lg font-bold text-slate-900">SafeHer Organization</h2>
           <p className="text-sm text-slate-600">
-            Multi-tenant campus and enterprise safety dashboard with PostgreSQL RLS, emergency escalation, and aggregate-only analytics (minimum cohort k ≥ 5).
+            Multi-tenant campus safety dashboard with PostgreSQL RLS, emergency escalation, and aggregate-only analytics ($k \ge 5$).
           </p>
           <div className="pt-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full">
@@ -158,25 +130,25 @@ export const HomePage: React.FC = () => {
               <span>FastAPI Engine</span>
             </div>
             <p className="text-lg font-bold text-white">v0.1.0</p>
-            <span className="text-[10px] text-emerald-400">Active (Uptime OK)</span>
+            <span className="text-[10px] text-emerald-400">Phase 2 Backend Online</span>
           </div>
 
           <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
             <div className="flex items-center gap-2 text-slate-400 text-xs mb-1">
               <Database className="w-4 h-4 text-blue-400" />
-              <span>PostgreSQL / PostGIS</span>
+              <span>Transactional Outbox</span>
             </div>
-            <p className="text-lg font-bold text-white">v16 (GIS 3.4)</p>
-            <span className="text-[10px] text-blue-400">Spatial Indexing Ready</span>
+            <p className="text-lg font-bold text-white">Active</p>
+            <span className="text-[10px] text-blue-400">Atomic Event Persistence</span>
           </div>
 
           <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">
             <div className="flex items-center gap-2 text-slate-400 text-xs mb-1">
               <Radio className="w-4 h-4 text-amber-400" />
-              <span>SMS Adapter</span>
+              <span>SMS Gateway</span>
             </div>
             <p className="text-lg font-bold text-amber-400">{health?.integrations?.sms || '[MOCK]'}</p>
-            <span className="text-[10px] text-slate-400">India DLT Prepared</span>
+            <span className="text-[10px] text-slate-400">DLT Mock Adapter Active</span>
           </div>
 
           <div className="bg-slate-800/80 p-4 rounded-xl border border-slate-700">

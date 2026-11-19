@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - Phase 2 Frontend (UI, Offline Outbox & Contact Ack Viewer)
+- `useGeolocation` hook for high-accuracy GPS coordinates, horizontal accuracy, and fresh location timestamps.
+- `useOfflineOutbox` hook detecting connectivity loss, queuing SOS incidents locally, displaying fail-loudly warnings ("NOT SENT — NO CONNECTION"), and launching native 112 dialer and pre-formatted emergency SMS.
+- `ContactManager` & `AddContactModal` supporting contact creation, priority ranking, and instant copy of consent links.
+- `SOSControl` featuring accessible one-thumb trigger, 5-second cancel countdown, and live per-contact delivery receipts feed.
+- `EmergencyAckPage` public viewer allowing emergency contacts to review sender coordinates and tap "I Am Responding".
+- `ContactVerifyPage` allowing designated contacts to review and consent to being an emergency responder.
+
 ### Added - Phase 2 Backend (Contacts, Smart SOS Core, Outbox & Chaos Verification)
 - Emergency Contacts engine (`emergency_contacts`) with priority ordering, verification tokens, and scoped location permissions.
 - Public Contact Verification endpoint (`/contacts/verify/{token}`) allowing contacts to accept or decline being an emergency responder.
