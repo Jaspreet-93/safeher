@@ -6,6 +6,7 @@ from app.api.v1.routes import (
     contacts,
     health,
     incidents,
+    places,
     users,
     webhooks,
 )
@@ -18,3 +19,4 @@ api_router.include_router(consent.router)
 api_router.include_router(contacts.router)
 api_router.include_router(incidents.router)
 api_router.include_router(webhooks.router)
+api_router.include_router(places.router)

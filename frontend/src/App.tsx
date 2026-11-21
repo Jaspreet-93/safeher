@@ -7,9 +7,10 @@ import { AuthPage } from './pages/AuthPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { EmergencyAckPage } from './pages/EmergencyAckPage';
 import { ContactVerifyPage } from './pages/ContactVerifyPage';
+import { SafePlacesPage } from './features/places/SafePlacesPage';
 
 export const MainContent: React.FC = () => {
-  const [currentView, setCurrentView] = useState<'home' | 'auth' | 'profile' | 'ack' | 'verify'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'auth' | 'profile' | 'ack' | 'verify' | 'places'>('home');
   const [routeToken, setRouteToken] = useState<string>('');
 
   useEffect(() => {
@@ -39,7 +40,7 @@ export const MainContent: React.FC = () => {
       <AppHeader
         environment="development"
         isMock={true}
-        currentView={currentView === 'ack' || currentView === 'verify' ? 'home' : currentView}
+        currentView={currentView === 'ack' || currentView === 'verify' ? 'home' : currentView as 'home' | 'auth' | 'profile' | 'places'}
         onNavigate={(view) => {
           window.history.pushState({}, '', '/');
           setCurrentView(view);
@@ -49,6 +50,7 @@ export const MainContent: React.FC = () => {
         {currentView === 'home' && <HomePage />}
         {currentView === 'auth' && <AuthPage onSuccess={() => setCurrentView('home')} />}
         {currentView === 'profile' && <ProfilePage />}
+        {currentView === 'places' && <SafePlacesPage />}
         {currentView === 'ack' && (
           <EmergencyAckPage token={routeToken} onBack={handleNavigateHome} />
         )}

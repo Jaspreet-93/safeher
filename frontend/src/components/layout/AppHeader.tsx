@@ -1,12 +1,12 @@
 import React from 'react';
-import { Shield, PhoneCall, AlertTriangle, User, Home, LogIn } from 'lucide-react';
+import { Shield, PhoneCall, AlertTriangle, User, Home, LogIn, MapPin } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 interface AppHeaderProps {
   environment?: string;
   isMock?: boolean;
-  currentView: 'home' | 'auth' | 'profile';
-  onNavigate: (view: 'home' | 'auth' | 'profile') => void;
+  currentView: 'home' | 'auth' | 'profile' | 'places';
+  onNavigate: (view: 'home' | 'auth' | 'profile' | 'places') => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -59,6 +59,19 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           >
             <Home className="w-4 h-4" />
             <span className="hidden sm:inline">Home</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('places')}
+            className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+              currentView === 'places'
+                ? 'bg-rose-50 text-rose-700'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+            }`}
+          >
+            <MapPin className="w-4 h-4" />
+            <span className="hidden sm:inline">Safe Places</span>
           </button>
 
           {isAuthenticated ? (
